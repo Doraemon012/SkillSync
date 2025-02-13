@@ -14,14 +14,7 @@ import { getStorage } from "firebase/storage";
 import { Zoom, toast } from "react-toastify";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_y-lKFbzqys8MV0Km7Na02IihmmOgAVw",
-  authDomain: "video-view-a0863.firebaseapp.com",
-  databaseURL: "https://video-view-a0863-default-rtdb.firebaseio.com",
-  projectId: "video-view-a0863",
-  storageBucket: "video-view-a0863.appspot.com",
-  messagingSenderId: "91729855149",
-  appId: "1:91729855149:web:eb9fd95078d6df72bdfc24",
-  measurementId: "G-MCVL8ZD2NS"
+
 };
 
 

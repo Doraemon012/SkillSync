@@ -1,0 +1,136 @@
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
+import GoogleButton from "react-google-button";
+import { ref, get, child, set } from "firebase/database";
+import { Zoom, toast } from "react-toastify";
+import { database, storage, signInWithGooglePopup } from "../../firebaseConf";
+import "./Signup.css";
+
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
+
+interface SignupProps {
+  isShow: boolean;
+  returnShow: (show: boolean) => void;
+}
+
+const Signup: React.FC<SignupProps> = ({ isShow, returnShow }) => {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => {
+    setShow(false);
+    returnShow(false);
+  };
+
+  useEffect(() => {
+    setShow(isShow);
+  }, [isShow]);
+
+  const logGoogleUser = async () => {
+    try {
+      const response = await signInWithGooglePopup();
+      const { email, uid, displayName: username, photoURL } = response.user;
+
+      const usersRef = ref(database, "user-ss");
+      const userRef = child(usersRef, uid);
+
+      const snapshot = await get(userRef);
+
+      if (snapshot.exists()) {
+        const userData = snapshot.val();
+        localStorage.setItem("userUid", uid);
+        localStorage.setItem("username", `${userData.name}`);
+        localStorage.setItem("userPic", userData.profile || userData.pic || "");
+        window.location.reload();
+        toast.success("Logged in successfully", { transition: Zoom });
+      } else {
+        const randomColors = [
+          "#FFEBEE",
+          "#E3F2FD",
+          "#E8F5E9",
+          "#FFFDE7",
+          "#F3E5F5",
+          "#FFF3E0",
+          "#E0F7FA",
+          "#FFF0E1",
+          "#F8F4FF",
+          "#E0F2F1",
+        ];
+        const randomColor =
+          randomColors[Math.floor(Math.random() * randomColors.length)];
+        const picURL = photoURL || "";
+
+        if (picURL) {
+          try {
+            console.log(picURL);
+        
+            const fetchWithDelay = async (url:any, delay = 1000) => {
+              await new Promise(resolve => setTimeout(resolve, delay));
+              return fetch(url);
+            };
+        
+            const response = await fetchWithDelay(picURL);
+            if (!response.ok) throw new Error("Failed to fetch the image");
+        
+            const imageBlob = await response.blob();
+        
+            const profileImageRef = storageRef(
+              storage,
+              `user-profile-pics/user-profile-pic-${uid}`
+            );
+            await uploadBytes(profileImageRef, imageBlob);
+            const picURL_firebase = await getDownloadURL(profileImageRef);
+        
+            await set(userRef, {
+              name: username,
+              email,
+              pic: picURL_firebase,
+              tags: "",
+              banner: randomColor,
+              uid,
+            });
+        
+            localStorage.setItem("userUid", uid);
+            localStorage.setItem("userPic", picURL);
+            window.location.reload();
+            toast.success("Signed up successfully", { transition: Zoom });
+          } catch (error) {
+            console.error("Error uploading image to Firebase Storage:", error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof Error && error.message.includes("popup")) {
+        // Handle pop-up closed by user
+        // toast.error("Sign up process was canceled", { transition: Zoom });
+      } else {
+        // Handle other authentication errors
+        toast.error("Failed to sign up. Please try again.", {
+          transition: Zoom,
+        });
+      }
+    }
+  };
+
+  return (
+    <Modal show={show} onHide={handleClose} animation={true}>
+      <Modal.Header closeButton>
+        <Modal.Title>SignUp or LogIn</Modal.Title>
+      </Modal.Header>
+      <Modal.Body className="d-flex justify-content-center align-items-center m-5">
+        <GoogleButton
+          type="light"
+          onClick={logGoogleUser}
+          label="Continue with Google"
+        />
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default Signup;

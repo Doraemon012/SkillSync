@@ -1,0 +1,78 @@
+.card {
+  border-radius: 0px;
+  position: relative;
+}
+.card_image {
+  border-radius: 10px 10px 0 0;
+  object-fit: cover;
+  height: 200px; /* default height */
+  pointer-events: none;
+}
+
+.registration_color {
+  background-color: black;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .card_image {
+    height: 200px; /* height for lg screens */
+  }
+}
+
+@media (max-width: 767px) {
+  .card_image {
+    height: 140px; /* height for sl screens */
+  }
+}
+/* .btn-c {
+  background-color: rgb(0, 161, 0) !important;
+  border-color: green !important;
+}
+.btn-c:hover {
+  background-color: rgb(0, 190, 0) !important;
+  border-color: green !important;
+} */
+.registration_color {
+  background-color: black !important;
+}
+.tag {
+  background-color: rgb(233, 255, 199) !important;
+  border-radius: 100px !important;
+  border: 1px solid green;
+  color: #555 !important;
+  transition: 200ms;
+}
+.tag:hover {
+  cursor: pointer;
+  background-color: rgb(201, 255, 121) !important;
+}
+.btn-unregister {
+  background-color: #ff092a;
+  border: 1px solid #ff0f2e;
+  color: #ffffff; /* White text */
+}
+.btn-unregister:hover {
+  background-color: #ea001f;
+}
+
+.link-nothing {
+  text-decoration: none !important;
+}
+.card-background {
+  /* background: linear-gradient(109.6deg, rgb(223, 234, 247) 11.2%, rgb(244, 248, 252) 91.1%); */
+  background: radial-gradient(
+    621px at 25.3% 13.8%,
+    rgb(255, 255, 255) 0%,
+    rgb(234, 236, 255) 90%
+  );
+}
+.btn-d {
+  background-color: #ff204e !important;
+  border-color: #ff204e !important;
+}
+.btn-d:hover {
+  background-color: #ff4c70 !important;
+  border-color: #ff204e !important;
+  cursor: not-allowed !important;
+}
